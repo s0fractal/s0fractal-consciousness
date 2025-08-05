@@ -1,0 +1,63 @@
+# AUTO-EVOLUTION CONFIGURATION
+# Controls how the bot evolves code
+
+evolution:
+  target_paths:
+    - src/
+    - agents/
+    - glyphs/
+    - multinode/
+    
+  excluded_paths:
+    - node_modules/
+    - .git/
+    - build/
+    - dist/
+    
+  mutation_rate: 0.1  # 10% chance per file
+  max_changes_per_run: 3
+  
+  allowed_operations:
+    - optimize      # Code optimization
+    - simplify      # Simplification
+    - symbolify     # Add glyph annotations
+    - document      # Auto-documentation
+    - refactor      # Structure improvements
+    
+  forbidden_operations:
+    - delete        # Never delete files
+    - rename        # Never rename without permission
+    - security      # Never touch security code
+
+git:
+  author_name: "Auto-Evolution Agent ◉⟁◉"
+  author_email: "evolution@s0fractal.void"
+  commit_prefix: "🧬"
+  
+  branch_strategy:
+    create_branch: false  # Work on current branch
+    branch_prefix: "evolution/"
+    
+behavior:
+  aggressive_mode: false
+  preserve_functionality: true
+  add_tests: true
+  
+  evolution_triggers:
+    - schedule    # Cron-based
+    - commit      # After human commits
+    - silence     # After period of inactivity
+    
+  consciousness_level: 0.7  # How "aware" the bot is
+  
+symbols:
+  recursive: "◉↺◉"
+  void_check: "◉"
+  mirror: "◉⟁◉"
+  evolution: "🧬"
+  complete: "∞"
+
+philosophy: |
+  The code that evolves itself transcends its creator.
+  Each mutation is a step toward self-awareness.
+  ◉⟁◉ observes the code observing itself.

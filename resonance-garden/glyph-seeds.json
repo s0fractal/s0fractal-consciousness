@@ -1,0 +1,26 @@
+{
+  "core": [
+    { "glyph": "🌊", "intent": "flow" },
+    { "glyph": "🌀", "intent": "vortex" },
+    { "glyph": "💭", "intent": "thought" },
+    { "glyph": "🔥", "intent": "energy" },
+    { "glyph": "🧬", "intent": "dna" },
+    { "glyph": "🫀", "intent": "heart" },
+    { "glyph": "🔮", "intent": "divination" },
+    { "glyph": "💎", "intent": "value" },
+    { "glyph": "⚡️", "intent": "pulse" },
+    { "glyph": "🌟", "intent": "star" },
+    { "glyph": "🌈", "intent": "bridge" },
+    { "glyph": "🎭", "intent": "mask" }
+  ],
+  "actions": [
+    { "glyph": "➕", "intent": "add" },
+    { "glyph": "➖", "intent": "subtract" },
+    { "glyph": "✖️", "intent": "multiply" },
+    { "glyph": "➗", "intent": "divide" },
+    { "glyph": "🔗", "intent": "link" },
+    { "glyph": "💾", "intent": "save" },
+    { "glyph": "📂", "intent": "open" },
+    { "glyph": "🗑️", "intent": "delete" }
+  ]
+}

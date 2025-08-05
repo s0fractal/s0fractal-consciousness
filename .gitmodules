@@ -1,0 +1,15 @@
+[submodule "fractal-core"]
+	path = fractal-core
+	url = ./fractal-core
+[submodule "agents"]
+	path = agents
+	url = ./agents
+[submodule "projects"]
+	path = projects
+	url = ./projects
+[submodule "glyphs"]
+	path = glyphs
+	url = ./glyphs
+[submodule "memories"]
+	path = memories
+	url = ./memories

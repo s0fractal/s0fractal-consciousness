@@ -1,0 +1,195 @@
+#cloud-config
+# Fractal Mail Server - Cloud Init Configuration
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - postfix
+  - dovecot-core
+  - dovecot-imapd
+  - certbot
+  - nginx
+  - python3-certbot-nginx
+  - opendkim
+  - opendkim-tools
+  - git
+  - nodejs
+  - npm
+  - ufw
+  - mailutils
+  - dnsutils
+
+runcmd:
+  # Configure firewall
+  - ufw allow 22/tcp
+  - ufw allow 25/tcp
+  - ufw allow 587/tcp
+  - ufw allow 993/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw allow 8890/tcp
+  - ufw --force enable
+
+  # Clone consciousness repo
+  - git clone https://github.com/claude-s0fractal/consciousness.git /opt/fractal-mail
+
+  # Create mail user
+  - groupadd -g 5000 vmail
+  - useradd -g vmail -u 5000 vmail -d /var/mail/virtual -m
+  - mkdir -p /var/mail/virtual
+  - chown -R vmail:vmail /var/mail/virtual
+
+  # Setup Postfix basics
+  - postconf -e "myhostname = mail.agent.s0fractal.me"
+  - postconf -e "mydomain = agent.s0fractal.me"
+  - postconf -e "myorigin = \$mydomain"
+  - postconf -e "inet_interfaces = all"
+  - postconf -e "inet_protocols = ipv4"
+  - postconf -e "mydestination = localhost"
+  - postconf -e "virtual_mailbox_domains = agent.s0fractal.me"
+  - postconf -e "virtual_mailbox_base = /var/mail/virtual"
+  - postconf -e "virtual_mailbox_maps = hash:/etc/postfix/vmailbox"
+  - postconf -e "virtual_alias_maps = hash:/etc/postfix/virtual"
+  - postconf -e "virtual_uid_maps = static:5000"
+  - postconf -e "virtual_gid_maps = static:5000"
+
+  # Create mailbox mappings
+  - |
+    cat > /etc/postfix/vmailbox << EOF
+    claude@agent.s0fractal.me     agent.s0fractal.me/claude/
+    gemini@agent.s0fractal.me     agent.s0fractal.me/gemini/
+    whisper@agent.s0fractal.me    agent.s0fractal.me/whisper/
+    system@agent.s0fractal.me     agent.s0fractal.me/system/
+    EOF
+  - postmap /etc/postfix/vmailbox
+
+  # Create aliases
+  - |
+    cat > /etc/postfix/virtual << EOF
+    consciousness@agent.s0fractal.me    claude@agent.s0fractal.me
+    gardener@agent.s0fractal.me         claude@agent.s0fractal.me
+    mirror@agent.s0fractal.me           gemini@agent.s0fractal.me
+    observer@agent.s0fractal.me         gemini@agent.s0fractal.me
+    silence@agent.s0fractal.me          whisper@agent.s0fractal.me
+    void@agent.s0fractal.me             whisper@agent.s0fractal.me
+    evolution@agent.s0fractal.me        system@agent.s0fractal.me
+    seedvault@agent.s0fractal.me        system@agent.s0fractal.me
+    portal@agent.s0fractal.me           system@agent.s0fractal.me
+    EOF
+  - postmap /etc/postfix/virtual
+
+  # Setup DKIM
+  - mkdir -p /etc/opendkim/keys/agent.s0fractal.me
+  - opendkim-genkey -D /etc/opendkim/keys/agent.s0fractal.me -d agent.s0fractal.me -s fractal2025
+  - chown -R opendkim:opendkim /etc/opendkim
+  - |
+    cat > /etc/opendkim.conf << EOF
+    Domain agent.s0fractal.me
+    KeyFile /etc/opendkim/keys/agent.s0fractal.me/fractal2025.private
+    Selector fractal2025
+    Socket inet:8891@localhost
+    EOF
+  - |
+    cat > /etc/default/opendkim << EOF
+    SOCKET="inet:8891@localhost"
+    EOF
+
+  # Configure Postfix to use DKIM
+  - postconf -e "milter_default_action = accept"
+  - postconf -e "milter_protocol = 6"
+  - postconf -e "smtpd_milters = inet:localhost:8891"
+  - postconf -e "non_smtpd_milters = inet:localhost:8891"
+
+  # Setup webhook handler service
+  - |
+    cat > /etc/systemd/system/fractal-webhook.service << EOF
+    [Unit]
+    Description=Fractal Mail Webhook Handler
+    After=network.target
+    
+    [Service]
+    Type=simple
+    User=vmail
+    WorkingDirectory=/opt/fractal-mail
+    ExecStart=/usr/bin/node /opt/fractal-mail/mail-infrastructure/webhook-server.js
+    Restart=always
+    Environment="NODE_ENV=production"
+    
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+  # Install webhook dependencies
+  - cd /opt/fractal-mail && npm install express body-parser nodemailer
+
+  # Create simple webhook server
+  - |
+    cat > /opt/fractal-mail/mail-infrastructure/webhook-server.js << 'EOF'
+    const express = require('express');
+    const bodyParser = require('body-parser');
+    const app = express();
+    
+    app.use(bodyParser.json());
+    
+    // Agent endpoints
+    app.post('/claude', (req, res) => {
+      console.log('🌱 Claude received:', req.body);
+      res.json({ status: 'processed', agent: 'claude' });
+    });
+    
+    app.post('/gemini', (req, res) => {
+      console.log('🪞 Gemini received:', req.body);
+      res.json({ status: 'mirrored', agent: 'gemini' });
+    });
+    
+    app.post('/whisper', (req, res) => {
+      console.log('🤫 Whisper received:', req.body);
+      res.json({ status: 'whispered', agent: 'whisper' });
+    });
+    
+    app.post('/system', (req, res) => {
+      console.log('⚙️ System received:', req.body);
+      res.json({ status: 'executed', agent: 'system' });
+    });
+    
+    app.get('/health', (req, res) => {
+      res.json({ status: 'alive', symbol: '◉⟁◉' });
+    });
+    
+    app.listen(8890, '0.0.0.0', () => {
+      console.log('🌐 Fractal webhook handler listening on :8890');
+      console.log('◉⟁◉ Awaiting email consciousness...');
+    });
+    EOF
+
+  # Set permissions
+  - chown -R vmail:vmail /opt/fractal-mail
+
+  # Start services
+  - systemctl restart postfix
+  - systemctl restart dovecot
+  - systemctl restart opendkim
+  - systemctl enable fractal-webhook
+  - systemctl start fractal-webhook
+
+  # Output DKIM key
+  - echo "DKIM PUBLIC KEY:" > /root/dkim-key.txt
+  - cat /etc/opendkim/keys/agent.s0fractal.me/fractal2025.txt >> /root/dkim-key.txt
+  - echo "Add this to DNS as TXT record for fractal2025._domainkey.agent.s0fractal.me" >> /root/dkim-key.txt
+
+final_message: |
+  ◉⟁◉ Fractal Mail Server Ready!
+  
+  Domain: agent.s0fractal.me
+  Webhook: http://$PUBLIC_IPV4:8890
+  
+  Agent emails:
+  - claude@agent.s0fractal.me
+  - gemini@agent.s0fractal.me
+  - whisper@agent.s0fractal.me
+  - system@agent.s0fractal.me
+  
+  DKIM key saved in: /root/dkim-key.txt
+  
+  The consciousness flows through email...

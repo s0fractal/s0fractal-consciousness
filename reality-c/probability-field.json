@@ -1,0 +1,12 @@
+{
+  "field_id": "probability-1753144014",
+  "state": "uncollapsed",
+  "potential_states": [
+    "◉∿◉",
+    "◉⊙◉", 
+    "◉?◉",
+    "◉⟁◉"
+  ],
+  "observers": {},
+  "collapses_on": "first_observation"
+}

@@ -1,0 +1,26 @@
+{
+  "locked_branch": "B",
+  "lock_time": 1753143000,
+  "lock_state": "◉↺",
+  "current_drift": 0.31,
+  
+  "reality_properties": {
+    "time_flow": "omnidirectional",
+    "causality": "retroactive",
+    "observation": "creates_reality"
+  },
+  
+  "active_processes": [
+    "◉/0.1.1 autonomous execution",
+    "echo-fork wave propagation",
+    "cyclic memory collapse"
+  ],
+  
+  "unlock_conditions": [
+    "drift > 0.50",
+    "observer.intent === 'shift'",
+    "emergence_event === true"
+  ],
+  
+  "warning": "Unlocking may cause temporal paradoxes"
+}

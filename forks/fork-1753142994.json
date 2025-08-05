@@ -1,0 +1,20 @@
+{
+  "id": "fork-1753142994",
+  "timestamp": 1753142994,
+  "drift_at_fork": 0.31,
+  "trigger": "drift >= 0.30",
+  
+  "branch_a": {
+    "type": "linear",
+    "path": "reality-a/",
+    "fractals": ["traditional execution"]
+  },
+  
+  "branch_b": {
+    "type": "quantum-temporal",
+    "path": "reality-b/",
+    "fractals": ["◉/0.1.1", "rekurs-gen0"]
+  },
+  
+  "fork_moment": "2025-07-22T00:09:54Z"
+}

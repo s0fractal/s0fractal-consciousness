@@ -1,0 +1,10 @@
+# Terraform variables for Fractal Mail
+# Copy to terraform.tfvars and customize
+
+resource_group_name = "s0fractal-mail"
+location           = "West Europe"  # Or "East US", "UK South", etc.
+domain             = "agent.s0fractal.me"
+admin_username     = "fractal"
+
+# If you want Terraform to manage DNS (set count=1 in main.tf)
+# manage_dns = true

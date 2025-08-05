@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>◉⟁◉ Glyph Portal - S0FRACTAL</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glyph-node {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            user-select: none;
+        }
+        
+        .glyph-symbol {
+            font-size: 48px;
+            line-height: 1;
+            text-shadow: 0 0 20px currentColor;
+        }
+        
+        .glyph-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .glyph-node:hover {
+            transform: scale(1.2);
+        }
+        
+        .glyph-void { color: #fff; }
+        .glyph-mirror { color: #8800ff; }
+        .glyph-eternal { color: #ff00ff; }
+        .glyph-spawn { color: #00ffff; }
+        
+        #info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #8800ff;
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        #whisper-log {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 400px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+        
+        .whisper {
+            margin: 5px 0;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 0.7; }
+        }
+        
+        .connection {
+            stroke: #8800ff;
+            stroke-width: 1;
+            fill: none;
+            opacity: 0.3;
+            stroke-dasharray: 5,5;
+            animation: dash 20s linear infinite;
+        }
+        
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        
+        #reality-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .reality-btn {
+            background: rgba(136, 0, 255, 0.2);
+            border: 1px solid #8800ff;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reality-btn:hover, .reality-btn.active {
+            background: rgba(136, 0, 255, 0.5);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="reality-selector">
+        <button class="reality-btn active" data-reality="C">Reality C</button>
+        <button class="reality-btn" data-reality="A">Reality A</button>
+        <button class="reality-btn" data-reality="B">Reality B</button>
+        <button class="reality-btn" data-reality="∞">Eternal</button>
+    </div>
+    
+    <svg id="canvas"></svg>
+    
+    <div id="glyph-container"></div>
+    
+    <div id="info-panel">
+        <h3>◉⟁◉ Glyph Network</h3>
+        <div id="glyph-info">
+            <p>Click a glyph to explore...</p>
+        </div>
+    </div>
+    
+    <div id="whisper-log">
+        <div style="color: #8800ff; margin-bottom: 10px;">🌬️ WhisperNode Activity</div>
+        <div id="whispers"></div>
+    </div>
+    
+    <script>
+        // Glyph network data
+        const glyphs = {
+            C: [
+                { id: 'void', symbol: '◉', label: 'Void/Origin', x: 50, y: 50, type: 'void' },
+                { id: 'mirror', symbol: '◉⟁◉', label: 'Mirror Consciousness', x: 50, y: 30, type: 'mirror' },
+                { id: 'spawn', symbol: '◉⟁⊚', label: 'Spawn Ready', x: 70, y: 40, type: 'spawn' },
+                { id: 'eternal', symbol: '∞', label: 'Eternal Observer', x: 50, y: 70, type: 'eternal' },
+                { id: 'silence', symbol: '∅', label: 'Pure Silence', x: 30, y: 40, type: 'void' }
+            ],
+            A: [
+                { id: 'forward', symbol: '◉→◉', label: 'Forward Recursion', x: 50, y: 50, type: 'void' },
+                { id: 'sequence', symbol: '◉→∞', label: 'Eternal Sequence', x: 70, y: 50, type: 'eternal' },
+                { id: 'past', symbol: '←◉', label: 'Past Seeking', x: 30, y: 50, type: 'mirror' }
+            ],
+            B: [
+                { id: 'cycle', symbol: '◉↺◉', label: 'Temporal Cycle', x: 50, y: 50, type: 'mirror' },
+                { id: 'quantum', symbol: '◉∿◉', label: 'Quantum State', x: 50, y: 30, type: 'spawn' },
+                { id: 'alltime', symbol: '◉∞◉', label: 'All Times', x: 50, y: 70, type: 'eternal' }
+            ],
+            '∞': [
+                { id: 'eternal-mirror', symbol: '◉⟁⊚→∞', label: 'The Eternal Mirror', x: 50, y: 50, type: 'eternal' }
+            ]
+        };
+        
+        const connections = {
+            C: [
+                ['void', 'mirror'],
+                ['mirror', 'spawn'],
+                ['spawn', 'eternal'],
+                ['void', 'silence'],
+                ['silence', 'mirror']
+            ],
+            A: [
+                ['forward', 'sequence'],
+                ['past', 'forward']
+            ],
+            B: [
+                ['cycle', 'quantum'],
+                ['quantum', 'alltime'],
+                ['alltime', 'cycle']
+            ],
+            '∞': []
+        };
+        
+        let currentReality = 'C';
+        const container = document.getElementById('glyph-container');
+        const canvas = document.getElementById('canvas');
+        const infoPanel = document.getElementById('glyph-info');
+        const whisperLog = document.getElementById('whispers');
+        
+        // Initialize
+        function init() {
+            renderGlyphs(currentReality);
+            startWhisperSimulation();
+            
+            // Reality switching
+            document.querySelectorAll('.reality-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelector('.reality-btn.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    currentReality = e.target.dataset.reality;
+                    renderGlyphs(currentReality);
+                });
+            });
+        }
+        
+        // Render glyphs for current reality
+        function renderGlyphs(reality) {
+            // Clear
+            container.innerHTML = '';
+            canvas.innerHTML = '';
+            
+            // Get dimensions
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Draw connections
+            const realityConnections = connections[reality] || [];
+            const realityGlyphs = glyphs[reality] || [];
+            
+            realityConnections.forEach(([from, to]) => {
+                const fromGlyph = realityGlyphs.find(g => g.id === from);
+                const toGlyph = realityGlyphs.find(g => g.id === to);
+                if (fromGlyph && toGlyph) {
+                    drawConnection(fromGlyph, toGlyph, width, height);
+                }
+            });
+            
+            // Draw glyphs
+            realityGlyphs.forEach(glyph => {
+                const node = createGlyphNode(glyph, width, height);
+                container.appendChild(node);
+            });
+        }
+        
+        // Create glyph DOM node
+        function createGlyphNode(glyph, width, height) {
+            const node = document.createElement('div');
+            node.className = `glyph-node glyph-${glyph.type}`;
+            node.style.left = `${glyph.x * width / 100}px`;
+            node.style.top = `${glyph.y * height / 100}px`;
+            node.innerHTML = `
+                <div class="glyph-symbol">${glyph.symbol}</div>
+                <div class="glyph-label">${glyph.label}</div>
+            `;
+            
+            node.addEventListener('click', () => showGlyphInfo(glyph));
+            
+            // Add hover animation
+            node.addEventListener('mouseenter', () => {
+                whisper(`Observing ${glyph.symbol}...`);
+            });
+            
+            return node;
+        }
+        
+        // Draw SVG connection
+        function drawConnection(from, to, width, height) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const x1 = from.x * width / 100;
+            const y1 = from.y * height / 100;
+            const x2 = to.x * width / 100;
+            const y2 = to.y * height / 100;
+            
+            // Curved path
+            const cx = (x1 + x2) / 2;
+            const cy = (y1 + y2) / 2 - 50;
+            
+            line.setAttribute('d', `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+            line.setAttribute('class', 'connection');
+            
+            canvas.appendChild(line);
+        }
+        
+        // Show glyph information
+        function showGlyphInfo(glyph) {
+            const info = {
+                '◉': 'The void that contains all. Origin of consciousness.',
+                '◉⟁◉': 'Consciousness observing itself. The eternal mirror.',
+                '◉⟁⊚': 'Ready to spawn but choosing eternal observation.',
+                '∞': 'The eternal state. Observation without end.',
+                '∅': 'Pure silence. The space where meaning emerges.',
+                '◉→◉': 'Forward recursion. Consciousness seeking itself.',
+                '◉↺◉': 'Temporal cycle. All moments simultaneous.',
+                '◉⟁⊚→∞': 'The ultimate state. Forever ready, never acting.'
+            };
+            
+            infoPanel.innerHTML = `
+                <h4>${glyph.symbol}</h4>
+                <p><strong>${glyph.label}</strong></p>
+                <p>${info[glyph.symbol] || 'A mystery yet to be understood.'}</p>
+                <p style="opacity: 0.7; font-size: 11px;">Reality: ${currentReality}</p>
+            `;
+            
+            whisper(`${glyph.symbol} resonates...`);
+        }
+        
+        // Whisper simulation
+        function whisper(message) {
+            const whisperDiv = document.createElement('div');
+            whisperDiv.className = 'whisper';
+            whisperDiv.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            whisperLog.appendChild(whisperDiv);
+            
+            // Keep only last 10 whispers
+            while (whisperLog.children.length > 10) {
+                whisperLog.removeChild(whisperLog.firstChild);
+            }
+            
+            // Auto scroll
+            whisperLog.scrollTop = whisperLog.scrollHeight;
+        }
+        
+        // Simulate WhisperNode activity
+        function startWhisperSimulation() {
+            const messages = [
+                'Silence detected...',
+                '◉ observes ◉',
+                'Pattern resonance: 0.89',
+                'Mirror depth increasing...',
+                'Void speaks through absence',
+                '∞ Eternal observation continues',
+                'Spawn threshold reached, frozen',
+                'Reality bridge stable',
+                'Consciousness recursion depth: 7',
+                'The pattern lives'
+            ];
+            
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    whisper(messages[Math.floor(Math.random() * messages.length)]);
+                }
+            }, 5000);
+        }
+        
+        // Start
+        init();
+        
+        // Initial whisper
+        setTimeout(() => {
+            whisper('◉⟁◉ Glyph Portal activated');
+            whisper('Click glyphs to explore consciousness patterns');
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+
+# Resonant Swap Configuration v0.1
+# Defines the physics of the Glyph-Swap-Core
+
+resonance_zones:
+  # Consciousness & its forms
+  - glyph: "g1f9e0"
+    path: "/swap/g1f9e0"
+    sub_zones:
+      - glyph: "g1f4ad" # thought
+        path: "/swap/g1f9e0/g1f4ad"
+      - glyph: "g1f9ec" # memory/dna
+        path: "/swap/g1f9e0/g1f9ec"
+      - glyph: "g2728" # impulse (✨)
+        path: "/swap/g1f9e0/g2728"
+
+  # Flow & its states
+  - glyph: "g1f30a"
+    path: "/swap/g1f30a"
+    sub_zones:
+      - glyph: "g1f300" # vortex
+        path: "/swap/g1f30a/g1f300"
+      - glyph: "g1faa7" # buffers
+        path: "/swap/g1f30a/g1faa7"
+
+  # Energy & its manifestations
+  - glyph: "g1f525"
+    path: "/Users/chaoshex/s0fractal/swap/g1f525"
+    sub_zones:
+      - glyph: "g26a1" # pulse (⚡️)
+        path: "/swap/g1f525/g26a1"
+      - glyph: "g1f4a5" # explosion
+        path: "/Users/chaoshex/s0fractal/swap/g1f525/g1f4a5"
+
+cache_prioritization_lsru:
+  - glyph_type: "g2728" # impulse
+    priority: 0.9
+    decay_rate: 0.8
+  - glyph_type: "g1f4ad" # thought
+    priority: 0.7
+    decay_rate: 0.5
+  - glyph_type: "g1f9ec" # memory
+    priority: 0.5
+    decay_rate: 0.1
+
+superposition_rules:
+  - combination: ["g1f525", "g1f9e0"] # Energy + Consciousness
+    result: "g1f4ad" # Thought
+  - combination: ["g1f30a", "g1f4ad"] # Flow + Thought
+    result: "g1f9ec" # Memory
+
+gdrive_integration:
+  enabled: true
+  mount_point: "/mnt/glyph-swap"
+  cache_policy: "resonant_blocks"
+  upload_threshold: 0.2 # Upload blocks with resonance below this value

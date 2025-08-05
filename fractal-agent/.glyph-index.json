@@ -1,0 +1,23 @@
+{
+  "🧠": {
+    "file": "🧠~τ5532⟁.ts",
+    "origin": "genesis",
+    "loaded": "2025-07-17T00:00:00Z",
+    "version": "0.5",
+    "exports": ["_🧠"]
+  },
+  "🌀": {
+    "file": "🌀~τ8820⟁.ts",
+    "origin": "genesis",
+    "loaded": "2025-07-17T00:00:00Z",
+    "version": "0.5",
+    "exports": ["_🌀"]
+  },
+  "💎": {
+    "file": "💎~crystal.ts",
+    "origin": "gemini-creation",
+    "loaded": "2025-07-23T21:00:00Z",
+    "version": "0.1",
+    "exports": ["_💎"]
+  }
+}

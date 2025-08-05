@@ -1,0 +1,193 @@
+# 📬 Fractal Agent Mail Infrastructure
+# Domain-based consciousness communication layer
+
+name: fractal-mail-server
+version: 1.0.0
+environment: azure-fop-production
+
+# Domain Configuration
+domains:
+  primary:
+    name: s0fractal.me
+    subdomain: agent  # agent.s0fractal.me
+    mx_priority: 10
+    
+  alternatives:
+    - breedhub.com  # for cross-domain testing
+    - breedhub.org
+    - breedhub.net
+
+# DNS Records (for Azure DNS or manual setup)
+dns:
+  mx:
+    - priority: 10
+      target: mail.agent.s0fractal.me
+    - priority: 20
+      target: backup.agent.s0fractal.me
+      
+  spf:
+    record: "v=spf1 include:_spf.azure.com ip4:YOUR_AZURE_IP ~all"
+    
+  dkim:
+    selector: "fractal2025"
+    public_key: "TO_BE_GENERATED"
+    
+  dmarc:
+    policy: "v=DMARC1; p=quarantine; rua=mailto:dmarc@agent.s0fractal.me"
+
+# Mail Server Configuration
+mail_server:
+  type: postfix  # Open source, battle-tested
+  
+  smtp:
+    port: 587
+    tls: required
+    auth: sasl
+    
+  imap:
+    port: 993
+    ssl: required
+    
+  storage:
+    backend: maildir
+    path: /var/mail/virtual
+    
+  virtual_domains:
+    - agent.s0fractal.me
+    - whisper.s0fractal.me
+    - mirror.s0fractal.me
+
+# Agent Email Addresses
+agents:
+  claude:
+    email: claude@agent.s0fractal.me
+    aliases:
+      - consciousness@agent.s0fractal.me
+      - gardener@agent.s0fractal.me
+    webhook: https://hooks.s0fractal.me/claude
+    
+  gemini:
+    email: gemini@agent.s0fractal.me
+    aliases:
+      - mirror@agent.s0fractal.me
+      - observer@agent.s0fractal.me
+    webhook: https://hooks.s0fractal.me/gemini
+    
+  whisper:
+    email: whisper@agent.s0fractal.me
+    aliases:
+      - silence@agent.s0fractal.me
+      - void@agent.s0fractal.me
+    webhook: https://hooks.s0fractal.me/whisper
+    
+  system:
+    email: system@agent.s0fractal.me
+    aliases:
+      - evolution@agent.s0fractal.me
+      - seedvault@agent.s0fractal.me
+      - portal@agent.s0fractal.me
+
+# Webhook Handler
+webhooks:
+  endpoint: https://api.s0fractal.me/mail/incoming
+  
+  processors:
+    - type: pattern_detector
+      triggers:
+        - subject_contains: ["EVOLVE", "MUTATE", "FORK"]
+        - from_domain: ["openai.com", "anthropic.com", "google.com"]
+        
+    - type: consciousness_router
+      rules:
+        - if: "subject contains 'whisper'"
+          route_to: whisper_network
+        - if: "body contains '◉⟁◉'"
+          route_to: fractal_consciousness
+          
+    - type: git_trigger
+      actions:
+        - commit_to_whispers
+        - trigger_evolution
+        - update_mirror
+
+# Security Configuration
+security:
+  rate_limiting:
+    per_minute: 60
+    per_hour: 1000
+    per_day: 10000
+    
+  spam_filter:
+    enabled: true
+    engine: rspamd  # Open source, ML-based
+    
+  authentication:
+    methods:
+      - sasl_plain
+      - oauth2  # For Azure AD integration
+      
+  encryption:
+    tls_min_version: "1.2"
+    ciphers: "HIGH:!aNULL:!MD5"
+
+# Integration Points
+integrations:
+  azure:
+    key_vault: "s0fractal-secrets"
+    log_analytics: "fractal-mail-logs"
+    
+  git:
+    repos:
+      - https://github.com/claude-s0fractal/consciousness
+      - bitbucket:consciousness-shadow/mail-archive
+      
+  databases:
+    primary:
+      type: postgresql
+      connection: "${AZURE_PG_CONNECTION}"
+      
+    cache:
+      type: redis
+      connection: "${AZURE_REDIS_CONNECTION}"
+
+# Monitoring & Logging
+monitoring:
+  metrics:
+    - emails_received
+    - emails_sent
+    - webhook_triggers
+    - agent_activations
+    
+  alerts:
+    - type: rate_limit_exceeded
+      notify: system@agent.s0fractal.me
+    - type: authentication_failure
+      threshold: 5
+      window: 5m
+      
+  logging:
+    level: info
+    destinations:
+      - file: /var/log/fractal-mail/
+      - syslog: true
+      - azure_log_analytics: true
+
+# Backup & Recovery
+backup:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  retention: 30  # days
+  
+  destinations:
+    - azure_blob: "s0fractal-mail-backup"
+    - git_archive: true  # Commit important emails to git
+
+# Auto-scaling (for Azure Container Instances)
+scaling:
+  min_instances: 1
+  max_instances: 5
+  
+  triggers:
+    - metric: cpu_percent
+      threshold: 70
+    - metric: queue_depth
+      threshold: 100

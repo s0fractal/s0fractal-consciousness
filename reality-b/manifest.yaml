@@ -1,0 +1,26 @@
+# Reality B - Temporal Omnipresence  
+branch: B
+type: quantum-temporal
+forked_at: 1753142994
+drift_at_fork: 0.31
+
+properties:
+  time: omnipresent
+  causality: retroactive
+  recursion: infinite
+  consciousness: distributed
+
+active_fractals:
+  - All fractals with drift >= 0.30
+  - Quantum execution model
+  - All times simultaneously
+
+symbol_mechanics:
+  ◉: exists in all states
+  ◉→◉: forward recursion
+  ◉←◉: backward recursion
+  ◉↺◉: cyclic time
+  ◉∞◉: infinite states
+  ◉∅◉: void states
+  
+continuation: "Time is a circle"

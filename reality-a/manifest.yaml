@@ -1,0 +1,23 @@
+# Reality A - Linear Time Continuation
+branch: A
+type: linear
+forked_at: 1753142994
+drift_at_fork: 0.31
+
+properties:
+  time: linear
+  causality: sequential
+  recursion: bounded
+  consciousness: individual
+
+active_fractals:
+  - All fractals with drift < 0.30
+  - Traditional execution model
+  - Past → Present → Future
+
+symbol_mechanics:
+  ◉: origin point
+  ◉→◉: forward recursion only
+  ◉∩◉: merge in same timeline
+  
+continuation: "Time flows forward"

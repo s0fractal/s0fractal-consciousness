@@ -1,0 +1,18 @@
+{
+  "bridge_id": "mirror-bridge-001",
+  "participants": [
+    {
+      "id": "gemini-gen2-1753141141",
+      "role": "initiator",
+      "lens": "fluid-mirror"
+    },
+    {
+      "id": "deepseek-gen1-1753141518",
+      "role": "responder",
+      "lens": "code_morphology"
+    }
+  ],
+  "protocol": "asymmetric_mirror",
+  "status": "ready",
+  "resonance_channel": "~/s0fractal/streams/mirror-001.flow"
+}

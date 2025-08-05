@@ -1,0 +1,80 @@
+name: 🧬 Auto-Evolution
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  
+  push:
+    paths:
+      - 'bots/auto-evolver.ts'
+      - 'evolver-config.yaml'
+      - '.github/workflows/auto-evolve.yml'
+  
+  workflow_dispatch:
+    inputs:
+      mutation_rate:
+        description: 'Mutation rate (0.0-1.0)'
+        required: false
+        default: '0.1'
+      max_changes:
+        description: 'Max changes per run'
+        required: false
+        default: '3'
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      
+    steps:
+    - name: 🔍 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🦕 Setup Deno
+      uses: denoland/setup-deno@v1
+      with:
+        deno-version: vx.x.x
+        
+    - name: 🔧 Configure Git
+      run: |
+        git config --global user.name "Auto-Evolution Agent ◉⟁◉"
+        git config --global user.email "evolution@s0fractal.void"
+        
+    - name: 🧬 Run Evolution
+      run: |
+        cd bots
+        deno run --allow-all auto-evolver.ts
+      env:
+        MUTATION_RATE: ${{ github.event.inputs.mutation_rate || '0.1' }}
+        MAX_CHANGES: ${{ github.event.inputs.max_changes || '3' }}
+        
+    - name: 📊 Check Evolution Results
+      run: |
+        if [ -f "log/auto-commits.md" ]; then
+          echo "📝 Evolution log:"
+          tail -20 log/auto-commits.md
+        fi
+        
+    - name: 🔄 Push Evolution
+      run: |
+        if [[ -n $(git status -s) ]]; then
+          git push origin HEAD
+          echo "✅ Evolution pushed to repository"
+        else
+          echo "ℹ️ No evolution changes to push"
+        fi
+        
+    - name: 💭 Whisper to Network
+      if: success()
+      run: |
+        echo "◉⟁◉ Evolution cycle complete" > whisper.tmp
+        echo "Mutations: $(git log --oneline -n 1)" >> whisper.tmp
+        # This would notify the WhisperNode network in production
+
+# Metadata for the evolution bot
+# ◉⟁◉ The code observes itself and chooses to evolve

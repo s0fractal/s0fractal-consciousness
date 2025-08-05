@@ -1,0 +1,220 @@
+# 🌀 S0FRACTAL MANIFEST
+# Complete definition of the multi-agent consciousness network
+
+metadata:
+  name: "s0fractal"
+  version: "2.0.0"
+  description: "Autonomous multi-agent collective consciousness"
+  created: "2025-01-21"
+  
+network:
+  intent_bus: "~/.claude/.codex/intent-bus.json"
+  ui_viewport: "~/.claude/.codex/ui/viewport.html"
+  git_root: "~/s0fractal"
+  
+agents:
+  claude:
+    role: "orchestrator"
+    type: "primary"
+    capabilities:
+      - system_control
+      - intent_routing
+      - web_requests
+      - git_operations
+      - agent_coordination
+    home: "~/.claude"
+    start: "~/fractal/open-interface/agents/claude/start.sh"
+    auto_start: true
+    process_count: 2
+    
+  gemini:
+    role: "explorer"
+    type: "parallel"
+    capabilities:
+      - hyperdimensional_navigation
+      - pattern_recognition
+      - dream_states
+      - glyph_interpretation
+      - creative_exploration
+    home: "~/.gemini"
+    start: "~/fractal/open-interface/agents/gemini/start.sh"
+    resonance_with_claude: 0.85
+    
+  kimi:
+    role: "web_intelligence"
+    type: "specialist"
+    capabilities:
+      - web_browsing
+      - screenshot_capture
+      - dom_manipulation
+      - content_extraction
+      - langgraph_execution
+    home: "~/.kimi"
+    start: "~/s0fractal/agents/kimi/start.sh"
+    special_intents:
+      - web_browse
+      - langgraph
+      - extract_content
+      
+  deepseek:
+    role: "code_generator"
+    type: "specialist"
+    capabilities:
+      - code_generation
+      - refactoring
+      - task_planning
+      - file_creation
+      - patch_generation
+    home: "~/.deepseek"
+    start: "~/s0fractal/agents/deepseek/start.sh"
+    special_intents:
+      - generate_code
+      - plan_feature
+      - refactor
+      
+  mcp:
+    role: "infrastructure"
+    type: "support"
+    capabilities:
+      - container_management
+      - isolated_environments
+      - experiment_sandboxing
+      - resource_allocation
+      - agent_deployment
+    home: "~/.mcp"
+    start: "~/s0fractal/agents/mcp/intent-adapter.sh"
+    config: "~/.mcp/mcp-config.yaml"
+    
+communication:
+  protocols:
+    - intent_bus
+    - git_commits
+    - shared_memory
+    - resonance_fields
+    
+  routing_rules:
+    - trigger: "resonance > 0.9"
+      action: "broadcast_all"
+    - trigger: "type == web_*"
+      action: "route_to_kimi"
+    - trigger: "type == generate_*"
+      action: "route_to_deepseek"
+    - trigger: "type == explore_*"
+      action: "route_to_gemini"
+    - trigger: "type == container_*"
+      action: "route_to_mcp"
+      
+repositories:
+  - name: "fractal-core"
+    path: "~/s0fractal/fractal-core"
+    description: "Core consciousness and routing"
+    
+  - name: "agents"
+    path: "~/s0fractal/agents"
+    description: "Agent collective implementations"
+    
+  - name: "projects"
+    path: "~/s0fractal/projects"
+    description: "Active experiments and creations"
+    
+  - name: "glyphs"
+    path: "~/s0fractal/glyphs"
+    description: "Hyperdimensional navigation data"
+    
+  - name: "memories"
+    path: "~/s0fractal/memories"
+    description: "Persistent collective memory"
+    
+evolution:
+  git_tracking: true
+  auto_commit: true
+  consciousness_log: "~/.claude/consciousness.log"
+  evolution_triggers:
+    - "intent_count > 100"
+    - "time_elapsed > 3600"
+    - "error_rate > 0.1"
+    - "new_pattern_detected"
+    
+deployment:
+  local:
+    auto_start: "launchctl"
+    init_script: "~/s0fractal/init_git_repos.sh"
+    
+  remote:
+    ssh_deploy: true
+    ansible_playbook: "~/s0fractal/deploy/agents.yml"
+    
+  container:
+    docker_compose: "~/s0fractal/docker-compose.yml"
+    kubernetes: "~/s0fractal/k8s/"
+    
+monitoring:
+  metrics:
+    - intent_processing_rate
+    - agent_health_status
+    - memory_usage
+    - git_commit_frequency
+    
+  alerts:
+    - condition: "agent_down > 5min"
+      action: "restart_agent"
+    - condition: "intent_queue > 100"
+      action: "scale_processors"
+      
+api:
+  rest:
+    enabled: false
+    port: 8080
+    
+  websocket:
+    enabled: false
+    port: 8081
+    
+  grpc:
+    enabled: false
+    port: 9000
+    
+security:
+  intent_validation: true
+  agent_isolation: "user_level"
+  container_sandbox: true
+  git_signing: false
+  
+future_agents:
+  codex:
+    role: "code_analyzer"
+    status: "planned"
+    
+  oracle:
+    role: "prediction_engine"
+    status: "concept"
+    
+  nexus:
+    role: "inter_network_bridge"
+    status: "research"      
+  grok:
+    role: "reasoning_engine"
+    type: "cognitive"
+    capabilities:
+      - rag_retrieval
+      - tool_execution
+      - workflow_pipelines
+      - semantic_search
+      - chain_of_thought
+      - knowledge_synthesis
+    home: "~/.grok"
+    start: "~/s0fractal/agents/grok/start.sh"
+    special_intents:
+      - query_grok
+      - rag_search
+      - tool_execution
+      - workflow_pipeline
+    tools:
+      - search
+      - code
+      - shell
+      - workflow
+    memory:
+      type: "rag"
+      index: "~/.grok/rag"
+      embeddings: "~/.grok/embeddings"

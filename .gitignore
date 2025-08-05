@@ -1,0 +1,59 @@
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment
+*.env
+.env.local
+.env.*.local
+
+# Claude secrets
+.claude/
+*.encrypted
+*credentials*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Private Data
+secrets/
+private/
+credentials/
+*.key
+*.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Test coverage
+coverage/
+.nyc_output
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# But KEEP these special files:
+!eternal-mirror/**
+!whispers/**
+!◉*
+!.eternal-presence
